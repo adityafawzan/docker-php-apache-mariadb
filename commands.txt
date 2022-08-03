@@ -1,0 +1,1 @@
+import database : docker exec -i db sh -c 'exec mariadb -uroot -p"root" tbj' < /home/aditya/MyDocker/php/src/tbj/sql/tbj.sql

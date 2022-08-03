@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+  php:
+    container_name: php
+    build: "./php/"
+    restart: always
+    volumes:
+      - ./public_html/:/var/www/html/
+    networks:
+      - backend
+
+  apache:
+    container_name: apache
+    build: "./apache/"
+    restart: always
+    volumes:
+      - ./public_html/:/var/www/html/
+    ports:
+      - "8001:80"
+    depends_on:
+      - php
+      - mariadb
+    networks:
+      - frontend
+      - backend
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - ./mariadb/data:/var/lib/mysql
+    ports:
+      - "9906:3306"
+    networks:
+      - backend
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+    ports:
+      - "8000:80"
+    depends_on:
+      - mariadb
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:

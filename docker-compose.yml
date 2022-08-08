@@ -30,6 +30,7 @@ services:
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: root
+    command: mysqld --sql_mode="ALLOW_INVALID_DATES"
     volumes:
       - ./mariadb/data:/var/lib/mysql
     ports:

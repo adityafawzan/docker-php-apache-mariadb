@@ -40,7 +40,7 @@ services:
 
   phpmyadmin:
     container_name: phpmyadmin
-    image: phpmyadmin
+    image: phpmyadmin/phpmyadmin
     restart: always
     environment:
       PMA_HOST: mariadb

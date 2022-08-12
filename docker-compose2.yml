@@ -1,0 +1,76 @@
+version: "3.8"
+
+networks:
+  web_server:
+  database:
+
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+    command: mysqld --sql_mode="ALLOW_INVALID_DATES"
+    volumes:
+      - "./mariadb/data:/var/lib/mysql"
+    ports:
+      - "9906:3306"
+    networks:
+      - database
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+    ports:
+      - "8000:80"
+    depends_on:
+      - mariadb
+    networks:
+      - database
+
+  php:
+    container_name: php7.4.30
+    build: "./php7.4.30/"
+    restart: always
+    volumes:
+      - "./apache2.4.54/htdocs/:/usr/local/apache2/htdocs/"
+    networks:
+      - web_server
+      - database
+
+  apache2.4.54:
+    container_name: apache2.4.54
+    build: "./apache2.4.54/"
+    restart: always
+    volumes:
+      - "./apache2.4.54/htdocs/:/usr/local/apache2/htdocs/"
+    ports:
+      - "8001:80"
+    depends_on:
+      - php
+      - mariadb
+    networks:
+      - web_server
+      - database
+
+  ionsoft:
+    container_name: ionsoft
+    image: docker.io/bitnami/laravel:8
+    ports:
+      - "8002:8000"
+    environment:
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - DB_DATABASE=ionsoft
+    volumes:
+      - "./apache2.4.54/htdocs/ionsoft:/app"
+    depends_on:
+      - mariadb
+    networks:
+      - database

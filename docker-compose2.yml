@@ -57,8 +57,8 @@ services:
       - web_server
       - database
 
-  ionsoft:
-    container_name: ionsoft
+  belajar_laravel:
+    container_name: belajar-laravel
     image: docker.io/bitnami/laravel:8
     ports:
       - "8002:8000"
@@ -67,9 +67,27 @@ services:
       - DB_PORT=3306
       - DB_USERNAME=root
       - DB_PASSWORD=root
+      - DB_DATABASE=belajar_laravel
+    volumes:
+      - "./apache2.4.54/htdocs/laravel/belajar-laravel:/app"
+    depends_on:
+      - mariadb
+    networks:
+      - database
+
+  ionsoft:
+    container_name: ionsoft
+    image: docker.io/bitnami/laravel:8
+    ports:
+      - "8003:8000"
+    environment:
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
       - DB_DATABASE=ionsoft
     volumes:
-      - "./apache2.4.54/htdocs/ionsoft:/app"
+      - "./apache2.4.54/htdocs/laravel/ionsoft:/app"
     depends_on:
       - mariadb
     networks:
